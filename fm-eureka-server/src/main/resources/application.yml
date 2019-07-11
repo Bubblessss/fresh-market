@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: fm-eureka-server
+server:
+  port: 8000
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    # 注册中心地址
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+    # 是否像服务中心注册自己
+    register-with-eureka: false
+    # 是否检索服务
+    fetch-registry: false
