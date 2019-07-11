@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: fm-user
+server:
+  port: 8001
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8080/eureka/
