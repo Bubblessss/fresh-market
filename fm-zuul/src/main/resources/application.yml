@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: fm-zuul
+server:
+  port: 8000
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8080/eureka/
+zuul:
+  # \u670D\u52A1\u8DEF\u7531\u89C4\u5219
+  routes:
+    fm-user: /user/**
+    fm-order: /order/**
