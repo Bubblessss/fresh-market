@@ -8,7 +8,7 @@ eureka:
     service-url:
       defaultZone: http://localhost:8080/eureka/
 zuul:
-  # \u670D\u52A1\u8DEF\u7531\u89C4\u5219
+  # 服务路由
   routes:
     fm-user: /user/**
     fm-order: /order/**
