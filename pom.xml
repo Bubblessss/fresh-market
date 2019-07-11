@@ -19,6 +19,7 @@
     <modules>
         <module>fm-eureka-server</module>
         <module>fm-zuul</module>
+        <module>fm-user</module>
     </modules>
 
     <properties>
