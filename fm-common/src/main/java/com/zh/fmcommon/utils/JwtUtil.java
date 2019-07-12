@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.Optional;
 
 /**
+ * JWT工具类
  * @author zhanghang
  * @date 2019/6/25
  */
