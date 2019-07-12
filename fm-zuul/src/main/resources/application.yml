@@ -1,12 +1,23 @@
 spring:
   application:
     name: fm-zuul
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
+    password:
+  data:
+    mongodb:
+      uri: mongodb://admin:admin@localhost:27017/test
+
 server:
   port: 8000
+
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8080/eureka/
+
 zuul:
   # 服务路由
   routes:
