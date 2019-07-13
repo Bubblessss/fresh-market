@@ -1,8 +1,10 @@
 package com.zh.fmcommon.exception.handler;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zh.fmcommon.enums.AppResultCodeEnum;
 import com.zh.fmcommon.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.zh.fmcommon.pojo.dto.Result;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import java.util.StringJoiner;
 
@@ -21,10 +24,18 @@ import java.util.StringJoiner;
 @RestControllerAdvice
 public class RestExceptionHandler {
 
+    @Autowired
+    private HttpServletRequest request;
+
+    private Result getExceptionResult(AppResultCodeEnum appResultCodeEnum){
+        String appVisitLogSequenceId = request.getParameter("appVisitLogSequenceId");
+        return Result.genFailResult(appResultCodeEnum,appVisitLogSequenceId);
+    }
+
     @ExceptionHandler(BusinessException.class)
     public Result businessExceptionHandler(BusinessException ex){
         log.error("BusinessException异常信息：[{}]", ex.getMsg(),ex);
-        return Result.genFailResult(ex.getAppResultCodeEnum());
+        return this.getExceptionResult(ex.getAppResultCodeEnum());
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
@@ -43,7 +54,7 @@ public class RestExceptionHandler {
         JSONObject jsonResult = new JSONObject();
         jsonResult.put(bindingResult.getObjectName(),sj.toString());
         log.error("{}：[{}]",msg,jsonResult.toJSONString(),ex);
-        return Result.genFailResult(jsonResult);
+        return this.getExceptionResult(AppResultCodeEnum.SYSTEM_ERROR);
     }
 
     @ExceptionHandler(value = ConstraintViolationException.class)
@@ -51,13 +62,13 @@ public class RestExceptionHandler {
         log.error("ConstraintViolationException异常信息：[{}]", ex.getMessage(),ex);
         JSONObject jsonResult = new JSONObject();
         ex.getConstraintViolations().forEach(e -> jsonResult.put(e.getPropertyPath().toString(),e.getMessageTemplate()));
-        return Result.genFailResult(jsonResult);
+        return this.getExceptionResult(AppResultCodeEnum.SYSTEM_ERROR);
     }
 
     @ExceptionHandler(value = Exception.class)
     public Result exceptionHandler(Exception ex){
         log.error("Exception异常信息：[{}]", ex.getMessage(),ex);
-        return Result.genFailResult(ex.getMessage());
+        return this.getExceptionResult(AppResultCodeEnum.SYSTEM_ERROR);
     }
 
 }

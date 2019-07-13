@@ -9,9 +9,12 @@ public enum AppResultCodeEnum {
 
     SUCCESS(200,"成功"),
 
-    FAIL(-1, "操作失败,请稍候再试!"),
+    FAIL(-1, "失败"),
 
-    USER_NOT_EXIST(100, "用户不存在!");
+    USER_NOT_EXIST(100, "用户不存在!"),
+
+
+    SYSTEM_ERROR(500, "系统异常!");
 
     private final int code;
 

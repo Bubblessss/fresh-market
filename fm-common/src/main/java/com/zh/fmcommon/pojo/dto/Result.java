@@ -1,62 +1,66 @@
 package com.zh.fmcommon.pojo.dto;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zh.fmcommon.enums.AppResultCodeEnum;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author zhanghang
  * @date 2019/6/5
  */
 @Data
-public class Result {
+@NoArgsConstructor
+public class Result extends AppResult{
 
-    private int code;
-
-    private String msg;
-
-    private Object data;
-
-    public Result() {}
-
-    public Result(int code, String msg) {
-        this.code = code;
-        this.msg = msg;
-    }
-
-    public Result(int code, String msg, Object data) {
-        this.code = code;
-        this.msg = msg;
-        this.data = data;
-    }
+    private String appVisitLogSequenceId;
 
     public Result(AppResultCodeEnum appResultCodeEnum) {
         this.code = appResultCodeEnum.getCode();
         this.msg = appResultCodeEnum.getMsg();
     }
 
-    public Result(AppResultCodeEnum appResultCodeEnum, Object data) {
+    public Result(AppResultCodeEnum appResultCodeEnum, JSONObject data) {
         this.code = appResultCodeEnum.getCode();
         this.msg = appResultCodeEnum.getMsg();
         this.data = data;
+    }
+
+    public Result(AppResultCodeEnum appResultCodeEnum, JSONObject data, String appVisitLogSequenceId) {
+        this.code = appResultCodeEnum.getCode();
+        this.msg = appResultCodeEnum.getMsg();
+        this.data = data;
+        this.appVisitLogSequenceId = appVisitLogSequenceId;
+    }
+
+    public Result(AppResultCodeEnum appResultCodeEnum, String appVisitLogSequenceId) {
+        this.code = appResultCodeEnum.getCode();
+        this.msg = appResultCodeEnum.getMsg();
+        this.appVisitLogSequenceId = appVisitLogSequenceId;
     }
 
     public static Result genSuccessResult() {
         return new Result(AppResultCodeEnum.SUCCESS);
     }
 
-    public static Result genSuccessResult(Object data) {
+    public static Result genSuccessResult(JSONObject data) {
         return new Result(AppResultCodeEnum.SUCCESS,data);
     }
 
-    public static Result genFailResult(AppResultCodeEnum appResultCodeEnum) {
-        return new Result(appResultCodeEnum);
+    public static Result genFailResult(AppResultCodeEnum appResultCodeEnum,String appVisitLogSequenceId) {
+        return new Result(appResultCodeEnum,appVisitLogSequenceId);
     }
 
     public static Result genFailResult() {
         return new Result(AppResultCodeEnum.FAIL);
     }
 
-    public static Result genFailResult(Object data) {
+    public static Result genFailResult(JSONObject data) {
         return new Result(AppResultCodeEnum.FAIL,data);
     }
+
+    public static Result genFailResult(JSONObject data,String appVisitLogSequenceId) {
+        return new Result(AppResultCodeEnum.FAIL,data,appVisitLogSequenceId);
+    }
+
 }

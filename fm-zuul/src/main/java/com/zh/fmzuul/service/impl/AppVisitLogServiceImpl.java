@@ -68,7 +68,7 @@ public class AppVisitLogServiceImpl implements AppVisitLogService {
         appVisitLog.setRequestUrl(requestUrl);
         appVisitLog.setRequestParam(requestParam);
         appVisitLog.setRequestTime(requestTime);
-        this.mongoTemplate.save(appVisitLog,this.getCollectionNameIfAbsent(requestTime));
+//        this.mongoTemplate.save(appVisitLog,this.getCollectionNameIfAbsent(requestTime));
     }
 
     @Async

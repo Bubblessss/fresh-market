@@ -6,4 +6,7 @@ package com.zh.fmcommon.constance;
  */
 public class CacheConstance {
 
+    public static final String APP_VISIT_LOG_REQUEST_TIME_PRE = "appVisitLog:requestTime:";
+
+    public static final String APP_VISIT_LOG_CLASS_METHOD_PRE = "appVisitLog:classMethod:";
 }
