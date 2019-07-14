@@ -12,7 +12,7 @@ public class HelloController {
 
     @GetMapping("/hello")
     public String hello(){
-        log.info("hello fm-order");
+        this.log.info("hello fm-order");
         throw new BusinessException(AppResultCodeEnum.USER_NOT_EXIST);
     }
 }

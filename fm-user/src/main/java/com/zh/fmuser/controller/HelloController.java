@@ -14,13 +14,13 @@ public class HelloController {
 
     @PostMapping("/hello")
     public Result hello(String appVisitLogSequenceId){
-        log.info("hello fm-user appVisitLogSequenceId:{}",appVisitLogSequenceId);
+        this.log.info("hello fm-user appVisitLogSequenceId:{}",appVisitLogSequenceId);
         throw new BusinessException(AppResultCodeEnum.FAIL);
     }
 
     @GetMapping("/hi")
-    public Result hi(String sequenceId){
-        log.info("hi fm-user sequenceId:{}",sequenceId);
+    public Result hi(String appVisitLogSequenceId){
+        log.info("hi fm-user appVisitLogSequenceId:{}",appVisitLogSequenceId);
         return Result.genSuccessResult();
     }
 }

@@ -7,8 +7,8 @@ spring:
     port: 6379
     password:
 server:
-  port: 8001
+  port: 8011
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8080/eureka/
+      defaultZone: http://localhost:8000/eureka/

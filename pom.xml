@@ -18,11 +18,15 @@
 
     <!-- 指定子目录 -->
     <modules>
+        <!-- 公共服务-->
+        <module>fm-common</module>
+        <!-- 组件服务-->
         <module>fm-eureka-server</module>
         <module>fm-zuul</module>
+        <module>fm-mongodb</module>
+        <!-- 业务服务-->
         <module>fm-user</module>
         <module>fm-order</module>
-        <module>fm-common</module>
     </modules>
 
     <properties>
@@ -38,10 +42,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-eureka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-feign</artifactId>
         </dependency>
 
         <dependency>
