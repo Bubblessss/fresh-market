@@ -6,20 +6,26 @@ spring:
     host: localhost
     port: 6379
     password:
-  data:
-    mongodb:
-      uri: mongodb://admin:admin@localhost:27017/test
 
 server:
-  port: 8000
+  port: 8001
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8080/eureka/
+      defaultZone: http://localhost:8000/eureka/
 
 zuul:
+  # 饥饿加载
+  ribbon:
+    eager-load:
+      enabled: true
+  ignored-services: '*'
   # 服务路由
   routes:
     fm-user: /user/**
     fm-order: /order/**
+
+ribbon:
+  ConnectTimeout: 5000
+  ReadTimeout: 10000

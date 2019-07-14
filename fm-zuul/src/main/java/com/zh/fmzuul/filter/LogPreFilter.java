@@ -69,7 +69,7 @@ public class LogPreFilter extends ZuulFilter {
         String requestUrl = request.getRequestURL().toString();
         String requestMethod = request.getMethod();
         Map<String, String[]> paramsMap =  request.getParameterMap();
-        String requestParam = JSONObject.toJSONString(paramsMap.size() == 0 ? null : paramsMap);
+        String requestParam = JSONObject.toJSONString(paramsMap);
         //workId和dataCenterId都是[0,31]
         long workId = WorkIdIdEnum.FM_ZUUL.getCode();
         long dataCenterId = DataCenterIdEnum.DataCenter_0.getCode();
@@ -79,16 +79,15 @@ public class LogPreFilter extends ZuulFilter {
         String token = request.getHeader("token");
         Date requestTime = new Date();
         String key = CacheConstance.APP_VISIT_LOG_REQUEST_TIME_PRE + appVisitLogSequenceId;
-        String value = DateTimeFormatter.ofPattern(DateConstance.FORMATTER_YYYY_MM_DD)
-                                        .format(LocalDateTime.ofInstant(requestTime.toInstant(), ZoneId.systemDefault()));
+        String value = DateConstance.FORMATTER_YYYY_MM_DD_HH_MM_SS_SSS.format(LocalDateTime.ofInstant(requestTime.toInstant(), ZoneId.systemDefault()));
         this.stringRedisTemplate.opsForValue().set(key,value,3, TimeUnit.MINUTES);
-        log.info("=====================appVisitLogSequenceId:{},请求路径:{}========================",appVisitLogSequenceId,requestUrl);
-        log.info("=====================appVisitLogSequenceId:{},请求方法:{}========================",appVisitLogSequenceId,requestMethod);
-        log.info("=====================appVisitLogSequenceId:{},客户端ip地址:{}========================",appVisitLogSequenceId,ip);
-        log.info("=====================appVisitLogSequenceId:{},请求参数:{}========================",appVisitLogSequenceId,requestParam);
-        log.info("=====================appVisitLogSequenceId:{},请求token:{}========================",appVisitLogSequenceId,token);
-        log.info("=====================appVisitLogSequenceId:{},请求头:{}========================",appVisitLogSequenceId,userAgent);
-        log.info("=====================appVisitLogSequenceId:{},请求时间:{}========================",appVisitLogSequenceId,requestTime);
+        this.log.info("=====================appVisitLogSequenceId:{},请求路径:{}========================",appVisitLogSequenceId,requestUrl);
+        this.log.info("=====================appVisitLogSequenceId:{},请求方法:{}========================",appVisitLogSequenceId,requestMethod);
+        this.log.info("=====================appVisitLogSequenceId:{},客户端ip地址:{}========================",appVisitLogSequenceId,ip);
+        this.log.info("=====================appVisitLogSequenceId:{},请求参数:{}========================",appVisitLogSequenceId,requestParam);
+        this.log.info("=====================appVisitLogSequenceId:{},请求token:{}========================",appVisitLogSequenceId,token);
+        this.log.info("=====================appVisitLogSequenceId:{},请求头:{}========================",appVisitLogSequenceId,userAgent);
+        this.log.info("=====================appVisitLogSequenceId:{},请求时间:{}========================",appVisitLogSequenceId,requestTime);
         this.appVisitLogService.saveRequestVisitLog(appVisitLogSequenceId,ip,userAgent,requestUrl,requestParam,requestTime);
         return appVisitLogSequenceId;
     }
