@@ -1,7 +1,7 @@
 package com.zh.fmcommon.pojo.dto;
 
 import com.alibaba.fastjson.JSONObject;
-import lombok.AllArgsConstructor;
+import com.zh.fmcommon.enums.AppResultCodeEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class AppResult {
 
     protected int code;
@@ -19,5 +18,14 @@ public class AppResult {
     protected String msg;
 
     protected JSONObject data;
+
+    public AppResult(AppResultCodeEnum appResultCodeEnum) {
+        this.code = appResultCodeEnum.getCode();
+        this.msg = appResultCodeEnum.getMsg();
+    }
+
+    public static AppResult genFailResult() {
+        return new AppResult(AppResultCodeEnum.SYSTEM_ERROR);
+    }
 
 }

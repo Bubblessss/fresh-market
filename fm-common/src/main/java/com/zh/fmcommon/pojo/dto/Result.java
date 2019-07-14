@@ -26,13 +26,6 @@ public class Result extends AppResult{
         this.data = data;
     }
 
-    public Result(AppResultCodeEnum appResultCodeEnum, JSONObject data, String appVisitLogSequenceId) {
-        this.code = appResultCodeEnum.getCode();
-        this.msg = appResultCodeEnum.getMsg();
-        this.data = data;
-        this.appVisitLogSequenceId = appVisitLogSequenceId;
-    }
-
     public Result(AppResultCodeEnum appResultCodeEnum, String appVisitLogSequenceId) {
         this.code = appResultCodeEnum.getCode();
         this.msg = appResultCodeEnum.getMsg();
@@ -47,20 +40,12 @@ public class Result extends AppResult{
         return new Result(AppResultCodeEnum.SUCCESS,data);
     }
 
+    public static Result genFailResult(AppResultCodeEnum appResultCodeEnum) {
+        return new Result(appResultCodeEnum);
+    }
+
     public static Result genFailResult(AppResultCodeEnum appResultCodeEnum,String appVisitLogSequenceId) {
         return new Result(appResultCodeEnum,appVisitLogSequenceId);
-    }
-
-    public static Result genFailResult() {
-        return new Result(AppResultCodeEnum.FAIL);
-    }
-
-    public static Result genFailResult(JSONObject data) {
-        return new Result(AppResultCodeEnum.FAIL,data);
-    }
-
-    public static Result genFailResult(JSONObject data,String appVisitLogSequenceId) {
-        return new Result(AppResultCodeEnum.FAIL,data,appVisitLogSequenceId);
     }
 
 }

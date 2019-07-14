@@ -6,6 +6,7 @@ import com.zh.fmcommon.constance.CacheConstance;
 import com.zh.fmcommon.pojo.dto.AppResult;
 import com.zh.fmcommon.pojo.dto.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -38,20 +39,24 @@ public class AppVisitPostLogAspect {
 
     @Before("appLogPointCut()")
     public void doBefore(JoinPoint joinPoint){
-        log.info("====================AOP:before拦截开启====================");
+        this.log.info("====================AOP:before拦截开启====================");
         Signature signature = joinPoint.getSignature();
         String clazzMethod = signature.getDeclaringTypeName() + "." + signature.getName();
         String appVisitLogSequenceId = request.getParameter("appVisitLogSequenceId");
-        String key = CacheConstance.APP_VISIT_LOG_CLASS_METHOD_PRE + appVisitLogSequenceId;
-        this.stringRedisTemplate.opsForValue().set(key,clazzMethod,3, TimeUnit.MINUTES);
+        if (StringUtils.isNotBlank(appVisitLogSequenceId)) {
+            String key = CacheConstance.APP_VISIT_LOG_CLASS_METHOD_PRE + appVisitLogSequenceId;
+            this.stringRedisTemplate.opsForValue().set(key, clazzMethod, 3, TimeUnit.MINUTES);
+        }
     }
 
     @AfterReturning(pointcut = "appLogPointCut()", returning = "ret")
     public void doAfterReturning(Object ret){
         log.info("====================AOP:afterReturning拦截开启====================");
-        String sequenceId = request.getParameter("appVisitLogSequenceId");
-        Result result = (Result) ret;
-        result.setAppVisitLogSequenceId(sequenceId);
+        String appVisitLogSequenceId = request.getParameter("appVisitLogSequenceId");
+        if (StringUtils.isNotBlank(appVisitLogSequenceId)) {
+            Result result = (Result) ret;
+            result.setAppVisitLogSequenceId(appVisitLogSequenceId);
+        }
     }
 
 }

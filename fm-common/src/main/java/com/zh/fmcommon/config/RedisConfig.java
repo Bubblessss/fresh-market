@@ -21,7 +21,7 @@ public class RedisConfig {
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        log.info("=============================redisTemplate注入成功============================");
+        this.log.info("=============================redisTemplate注入成功============================");
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         // 使用Jackson2JsonRedisSerialize 替换默认序列化
