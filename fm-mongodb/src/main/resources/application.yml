@@ -1,0 +1,14 @@
+spring:
+  application:
+      name: fm-mongodb
+  data:
+    mongodb:
+      uri: mongodb://admin:admin@localhost:27017/test
+
+server:
+  port: 8002
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8000/eureka/
