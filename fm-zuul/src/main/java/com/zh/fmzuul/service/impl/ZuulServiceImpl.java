@@ -7,15 +7,14 @@ import com.zh.fmcommon.constance.DateConstance;
 import com.zh.fmcommon.constance.MongoDBConstance;
 import com.zh.fmcommon.pojo.bo.AppVisitLog;
 import com.zh.fmcommon.pojo.dto.Result;
+import com.zh.fmcommon.pojo.po.User;
 import com.zh.fmcommon.utils.JwtUtil;
-import com.zh.fmzuul.service.AppVisitLogService;
+import com.zh.fmzuul.service.ZuulService;
 import com.zh.fmzuul.service.fmmongodb.AppVisitLogApiService;
+import com.zh.fmzuul.service.fmuser.UserApiService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author zhanghang
@@ -31,10 +29,13 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Service
-public class AppVisitLogServiceImpl implements AppVisitLogService {
+public class ZuulServiceImpl implements ZuulService {
 
     @Autowired
     private AppVisitLogApiService appVisitLogApiService;
+
+    @Autowired
+    private UserApiService userApiService;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -84,38 +85,41 @@ public class AppVisitLogServiceImpl implements AppVisitLogService {
         appVisitLog.setRequestUrl(requestUrl);
         appVisitLog.setRequestParam(requestParam);
         appVisitLog.setRequestTime(requestTime);
-        Result result = this.appVisitLogApiService.saveRequestAppVisitLog(appVisitLog);
+        Result result = this.appVisitLogApiService.saveAppVisitLog(appVisitLog);
         log.info("fm-mongodb result:{}", JSONObject.toJSONString(result, SerializerFeature.WriteMapNullValue));
     }
 
     @Override
     @Async("appVisitLogExecutor")
-    public void saveResponseVisitLog(JSONObject resultJson) {
-        if (resultJson != null && !resultJson.isEmpty()) {
-            log.info("===========调用fm-mongodb服务保存应用响应日志===========");
-            log.info("响应日志:{}",resultJson.toJSONString());
-            Integer status = resultJson.getInteger("code");
-            String sequenceId = resultJson.getString("appVisitLogSequenceId");
-            String requestTimeKey = CacheConstance.APP_VISIT_LOG_REQUEST_TIME_PRE + sequenceId;
-            String requestTimeStr = this.stringRedisTemplate.opsForValue().get(requestTimeKey);
-            String classMethodKey = CacheConstance.APP_VISIT_LOG_CLASS_METHOD_PRE + sequenceId;
-            String classMethod = this.stringRedisTemplate.opsForValue().get(classMethodKey);
-            Date responseTime = new Date();
-            LocalDateTime requestLocalDateTime = LocalDateTime.from(DateConstance.FORMATTER_YYYY_MM_DD_HH_MM_SS_SSS.parse(requestTimeStr));
-            Date requestTime = Date.from(requestLocalDateTime.atZone(ZoneId.systemDefault()).toInstant());
-            Long costTime = responseTime.getTime() - requestTime.getTime();
-            //构建响应日志
-            AppVisitLog appVisitLog = new AppVisitLog();
-            appVisitLog.setSequenceId(sequenceId);
-            appVisitLog.setLogType(MongoDBConstance.LOG_TYPE_RESPONSE);
-            appVisitLog.setRequestClazz(classMethod);
-            appVisitLog.setRequestTime(responseTime);
-            appVisitLog.setCostTime(costTime);
-            appVisitLog.setResponseContent(resultJson.toJSONString());
-            appVisitLog.setStatus(status);
-            Result result = this.appVisitLogApiService.saveRequestAppVisitLog(appVisitLog);
-            log.info("fm-mongodb result:{}", JSONObject.toJSONString(result, SerializerFeature.WriteMapNullValue));
-        }
+    public void saveResponseVisitLog(String sequenceId,String serviceId,String responseContent, Integer status) {
+        log.info("===========调用fm-mongodb服务保存应用响应日志===========");
+        String requestTimeKey = CacheConstance.APP_VISIT_LOG_REQUEST_TIME_PRE + sequenceId;
+        String requestTimeStr = this.stringRedisTemplate.opsForValue().get(requestTimeKey);
+        String classMethodKey = CacheConstance.APP_VISIT_LOG_CLASS_METHOD_PRE + sequenceId;
+        String classMethod = this.stringRedisTemplate.opsForValue().get(classMethodKey);
+        Date responseTime = new Date();
+        LocalDateTime requestLocalDateTime = LocalDateTime.from(DateConstance.FORMATTER_YYYY_MM_DD_HH_MM_SS_SSS.parse(requestTimeStr));
+        Date requestTime = Date.from(requestLocalDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        Long costTime = responseTime.getTime() - requestTime.getTime();
+        //构建响应日志
+        AppVisitLog appVisitLog = new AppVisitLog();
+        appVisitLog.setSequenceId(sequenceId);
+        appVisitLog.setLogType(MongoDBConstance.LOG_TYPE_RESPONSE);
+        appVisitLog.setServiceId(serviceId);
+        appVisitLog.setRequestTime(requestTime);
+        appVisitLog.setRequestClazz(classMethod);
+        appVisitLog.setResponseTime(responseTime);
+        appVisitLog.setCostTime(costTime);
+        appVisitLog.setStatus(status);
+        appVisitLog.setResponseContent(responseContent);
+        Result result = this.appVisitLogApiService.saveAppVisitLog(appVisitLog);
+        log.info("fm-mongodb result:{}", JSONObject.toJSONString(result, SerializerFeature.WriteMapNullValue));
+    }
+
+    @Override
+    public User findUserById(Integer userId) {
+        Result result = this.userApiService.findUserById(userId);
+        return (User) result.getData().get("user");
     }
 
 }

@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient("fm-mongodb")
 public interface AppVisitLogApiService {
 
-    @PostMapping("/appVisitLog/saveRequestAppVisitLog")
-    Result saveRequestAppVisitLog(@RequestBody AppVisitLog appVisitLog);
+    @PostMapping("/appVisitLog/saveAppVisitLog")
+    Result saveAppVisitLog(@RequestBody AppVisitLog appVisitLog);
 
 //    @PostMapping("/appVisitLog/saveResponseVisitLog")
 //    Result saveResponseVisitLog(@RequestParam Query query, @RequestParam Update update, @RequestParam String collectionName);

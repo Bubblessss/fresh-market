@@ -5,8 +5,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.zh.fmcommon.pojo.dto.AppResult;
-import com.zh.fmcommon.pojo.dto.Result;
-import com.zh.fmzuul.service.AppVisitLogService;
+import com.zh.fmzuul.service.ZuulService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ import java.nio.charset.StandardCharsets;
 public class LogPostFilter extends ZuulFilter {
 
     @Autowired
-    private AppVisitLogService appVisitLogService;
+    private ZuulService zuulService;
 
     @Override
     public String filterType() {
@@ -37,7 +36,7 @@ public class LogPostFilter extends ZuulFilter {
 
     @Override
     public int filterOrder() {
-        return 0;
+        return 10;
     }
 
     @Override
@@ -50,7 +49,7 @@ public class LogPostFilter extends ZuulFilter {
         RequestContext ctx = RequestContext.getCurrentContext();
         InputStream in = ctx.getResponseDataStream();
         String responseBody = null;
-        AppResult appResult;
+        AppResult appResult = null;
         JSONObject resultJson = null;
         try {
             String resultJsonStr = StreamUtils.copyToString(in, StandardCharsets.UTF_8);
@@ -66,8 +65,11 @@ public class LogPostFilter extends ZuulFilter {
             responseBody = JSONObject.toJSONString(appResult, SerializerFeature.WriteMapNullValue);
             resultJson = JSONObject.parseObject(responseBody);
         }
-        resultJson.put("serviceId",ctx.get("serviceId"));
-        this.appVisitLogService.saveResponseVisitLog(resultJson);
+        String sequenceId  = resultJson.getString("appVisitLogSequenceId");
+        String serviceId  = ctx.get("serviceId").toString();
+        Integer status  = appResult.getCode();
+        this.zuulService.saveResponseVisitLog(sequenceId,serviceId,responseBody,status);
+        ctx.getResponse().setContentType("application/json;charset=UTF-8");
         ctx.setResponseBody(responseBody);
         return null;
     }

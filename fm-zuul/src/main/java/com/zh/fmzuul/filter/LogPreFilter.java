@@ -9,18 +9,16 @@ import com.zh.fmcommon.constance.DateConstance;
 import com.zh.fmcommon.enums.DataCenterIdEnum;
 import com.zh.fmcommon.enums.WorkIdIdEnum;
 import com.zh.fmcommon.utils.IpUtil;
-import com.zh.fmzuul.service.AppVisitLogService;
+import com.zh.fmzuul.service.ZuulService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -34,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 public class LogPreFilter extends ZuulFilter {
 
     @Autowired
-    private AppVisitLogService appVisitLogService;
+    private ZuulService zuulService;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -88,7 +86,7 @@ public class LogPreFilter extends ZuulFilter {
         log.info("=====================appVisitLogSequenceId:{},请求token:{}========================",appVisitLogSequenceId,token);
         log.info("=====================appVisitLogSequenceId:{},请求头:{}========================",appVisitLogSequenceId,userAgent);
         log.info("=====================appVisitLogSequenceId:{},请求时间:{}========================",appVisitLogSequenceId,requestTime);
-        this.appVisitLogService.saveRequestVisitLog(appVisitLogSequenceId,token,ip,userAgent,requestUrl,requestParam,requestTime);
+        this.zuulService.saveRequestVisitLog(appVisitLogSequenceId,token,ip,userAgent,requestUrl,requestParam,requestTime);
         return appVisitLogSequenceId;
     }
 
