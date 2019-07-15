@@ -88,7 +88,7 @@ public class LogPreFilter extends ZuulFilter {
         log.info("=====================appVisitLogSequenceId:{},请求token:{}========================",appVisitLogSequenceId,token);
         log.info("=====================appVisitLogSequenceId:{},请求头:{}========================",appVisitLogSequenceId,userAgent);
         log.info("=====================appVisitLogSequenceId:{},请求时间:{}========================",appVisitLogSequenceId,requestTime);
-        this.appVisitLogService.saveRequestVisitLog(appVisitLogSequenceId,ip,userAgent,requestUrl,requestParam,requestTime);
+        this.appVisitLogService.saveRequestVisitLog(appVisitLogSequenceId,token,ip,userAgent,requestUrl,requestParam,requestTime);
         return appVisitLogSequenceId;
     }
 

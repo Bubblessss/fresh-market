@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public interface AppVisitLogService {
 
-    void saveRequestVisitLog(String sequenceId, String ip, String userAgent, String requestUrl, String requestParam, Date requestTime);
+    void saveRequestVisitLog(String sequenceId, String token, String ip, String userAgent, String requestUrl, String requestParam, Date requestTime);
 
     void saveResponseVisitLog(JSONObject resultJson);
 

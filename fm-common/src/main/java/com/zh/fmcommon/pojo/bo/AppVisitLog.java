@@ -20,6 +20,8 @@ public class AppVisitLog {
 
     private String sequenceId;
 
+    private Integer logType;
+
     private String serviceId;
 
     private String token;

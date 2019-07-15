@@ -7,9 +7,11 @@ import com.zh.fmcommon.constance.DateConstance;
 import com.zh.fmcommon.constance.MongoDBConstance;
 import com.zh.fmcommon.pojo.bo.AppVisitLog;
 import com.zh.fmcommon.pojo.dto.Result;
+import com.zh.fmcommon.utils.JwtUtil;
 import com.zh.fmzuul.service.AppVisitLogService;
 import com.zh.fmzuul.service.fmmongodb.AppVisitLogApiService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -65,10 +67,18 @@ public class AppVisitLogServiceImpl implements AppVisitLogService {
 
     @Override
     @Async("appVisitLogExecutor")
-    public void saveRequestVisitLog(String sequenceId, String ip, String userAgent, String requestUrl, String requestParam, Date requestTime) {
+    public void saveRequestVisitLog(String sequenceId, String token, String ip, String userAgent, String requestUrl, String requestParam, Date requestTime) {
         log.info("===========调用fm-mongodb服务保存应用请求日志===========");
+        Integer userId = null;
+        if (StringUtils.isNotBlank(token)){
+            userId =  JwtUtil.getUserId(token);
+        }
+        //构建请求日志
         AppVisitLog appVisitLog = new AppVisitLog();
         appVisitLog.setSequenceId(sequenceId);
+        appVisitLog.setLogType(MongoDBConstance.LOG_TYPE_REQUEST);
+        appVisitLog.setToken(token);
+        appVisitLog.setUserId(userId);
         appVisitLog.setIp(ip);
         appVisitLog.setUserAgent(userAgent);
         appVisitLog.setRequestUrl(requestUrl);
@@ -85,23 +95,26 @@ public class AppVisitLogServiceImpl implements AppVisitLogService {
             log.info("===========调用fm-mongodb服务保存应用响应日志===========");
             log.info("响应日志:{}",resultJson.toJSONString());
             Integer status = resultJson.getInteger("code");
-            String appVisitLogSequenceId = resultJson.getString("appVisitLogSequenceId");
-            String requestTimeKey = CacheConstance.APP_VISIT_LOG_REQUEST_TIME_PRE + appVisitLogSequenceId;
+            String sequenceId = resultJson.getString("appVisitLogSequenceId");
+            String requestTimeKey = CacheConstance.APP_VISIT_LOG_REQUEST_TIME_PRE + sequenceId;
             String requestTimeStr = this.stringRedisTemplate.opsForValue().get(requestTimeKey);
-            String classMethodKey = CacheConstance.APP_VISIT_LOG_CLASS_METHOD_PRE + appVisitLogSequenceId;
+            String classMethodKey = CacheConstance.APP_VISIT_LOG_CLASS_METHOD_PRE + sequenceId;
             String classMethod = this.stringRedisTemplate.opsForValue().get(classMethodKey);
             Date responseTime = new Date();
             LocalDateTime requestLocalDateTime = LocalDateTime.from(DateConstance.FORMATTER_YYYY_MM_DD_HH_MM_SS_SSS.parse(requestTimeStr));
             Date requestTime = Date.from(requestLocalDateTime.atZone(ZoneId.systemDefault()).toInstant());
             Long costTime = responseTime.getTime() - requestTime.getTime();
-            Query query = Query.query(Criteria.where("sequenceId").is(appVisitLogSequenceId));
-            Update update = Update.update("serviceId", resultJson.getString("serviceId"))
-                    .set("classMethod", classMethod)
-                    .set("responseTime", responseTime)
-                    .set("costTime", costTime)
-                    .set("responseContent", resultJson.toJSONString())
-                    .set("status", status);
-//        this.appVisitLogApiService.saveResponseVisitLog(query,update,this.getCollectionName(requestTime));
+            //构建响应日志
+            AppVisitLog appVisitLog = new AppVisitLog();
+            appVisitLog.setSequenceId(sequenceId);
+            appVisitLog.setLogType(MongoDBConstance.LOG_TYPE_RESPONSE);
+            appVisitLog.setRequestClazz(classMethod);
+            appVisitLog.setRequestTime(responseTime);
+            appVisitLog.setCostTime(costTime);
+            appVisitLog.setResponseContent(resultJson.toJSONString());
+            appVisitLog.setStatus(status);
+            Result result = this.appVisitLogApiService.saveRequestAppVisitLog(appVisitLog);
+            log.info("fm-mongodb result:{}", JSONObject.toJSONString(result, SerializerFeature.WriteMapNullValue));
         }
     }
 
