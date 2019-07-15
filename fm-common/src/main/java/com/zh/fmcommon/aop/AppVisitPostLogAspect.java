@@ -39,7 +39,7 @@ public class AppVisitPostLogAspect {
 
     @Before("appLogPointCut()")
     public void doBefore(JoinPoint joinPoint){
-        this.log.info("====================AOP:before拦截开启====================");
+        log.info("====================AOP:before拦截开启====================");
         Signature signature = joinPoint.getSignature();
         String clazzMethod = signature.getDeclaringTypeName() + "." + signature.getName();
         String appVisitLogSequenceId = request.getParameter("appVisitLogSequenceId");

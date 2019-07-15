@@ -14,7 +14,7 @@ public class HelloController {
 
     @PostMapping("/hello")
     public Result hello(String appVisitLogSequenceId){
-        this.log.info("hello fm-user appVisitLogSequenceId:{}",appVisitLogSequenceId);
+        log.info("hello fm-user appVisitLogSequenceId:{}",appVisitLogSequenceId);
         throw new BusinessException(AppResultCodeEnum.FAIL);
     }
 

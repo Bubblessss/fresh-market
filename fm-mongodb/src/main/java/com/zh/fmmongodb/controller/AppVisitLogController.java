@@ -15,7 +15,7 @@ public class AppVisitLogController {
 
     @PostMapping("/saveRequestAppVisitLog")
     public Result saveRequestAppVisitLog(@RequestBody AppVisitLog appVisitLog){
-        this.log.info("fm-mongodb:{}",appVisitLog);
+        log.info("fm-mongodb:{}",appVisitLog);
         return Result.genSuccessResult();
     }
 }

@@ -55,7 +55,7 @@ public class LogPostFilter extends ZuulFilter {
         try {
             String resultJsonStr = StreamUtils.copyToString(in, StandardCharsets.UTF_8);
             if (StringUtils.isNotBlank(resultJsonStr)){
-                this.log.info("服务端返回结果:{}",resultJsonStr);
+                log.info("服务端返回结果:{}",resultJsonStr);
                 resultJson = JSONObject.parseObject(resultJsonStr);
                 appResult = JSONObject.toJavaObject(resultJson,AppResult.class);
                 responseBody = JSONObject.toJSONString(appResult, SerializerFeature.WriteMapNullValue);

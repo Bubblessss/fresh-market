@@ -66,7 +66,7 @@ public class AppVisitLogServiceImpl implements AppVisitLogService {
     @Override
     @Async("appVisitLogExecutor")
     public void saveRequestVisitLog(String sequenceId, String ip, String userAgent, String requestUrl, String requestParam, Date requestTime) {
-        this.log.info("===========调用fm-mongodb服务保存应用请求日志===========");
+        log.info("===========调用fm-mongodb服务保存应用请求日志===========");
         AppVisitLog appVisitLog = new AppVisitLog();
         appVisitLog.setSequenceId(sequenceId);
         appVisitLog.setIp(ip);
@@ -75,15 +75,15 @@ public class AppVisitLogServiceImpl implements AppVisitLogService {
         appVisitLog.setRequestParam(requestParam);
         appVisitLog.setRequestTime(requestTime);
         Result result = this.appVisitLogApiService.saveRequestAppVisitLog(appVisitLog);
-        this.log.info("fm-mongodb result:{}", JSONObject.toJSONString(result, SerializerFeature.WriteMapNullValue));
+        log.info("fm-mongodb result:{}", JSONObject.toJSONString(result, SerializerFeature.WriteMapNullValue));
     }
 
     @Override
     @Async("appVisitLogExecutor")
     public void saveResponseVisitLog(JSONObject resultJson) {
         if (resultJson != null && !resultJson.isEmpty()) {
-            this.log.info("===========调用fm-mongodb服务保存应用响应日志===========");
-            this.log.info("响应日志:{}",resultJson.toJSONString());
+            log.info("===========调用fm-mongodb服务保存应用响应日志===========");
+            log.info("响应日志:{}",resultJson.toJSONString());
             Integer status = resultJson.getInteger("code");
             String appVisitLogSequenceId = resultJson.getString("appVisitLogSequenceId");
             String requestTimeKey = CacheConstance.APP_VISIT_LOG_REQUEST_TIME_PRE + appVisitLogSequenceId;

@@ -36,7 +36,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public Result businessExceptionHandler(BusinessException ex){
-        this.log.error("BusinessException异常信息：[{}]", ex.getMsg(),ex);
+        log.error("BusinessException异常信息：[{}]", ex.getMsg(),ex);
         return this.getExceptionResult(ex.getAppResultCodeEnum());
     }
 
@@ -55,13 +55,13 @@ public class RestExceptionHandler {
         bindingResult.getAllErrors().forEach(e -> sj.add(e.getDefaultMessage()));
         JSONObject jsonResult = new JSONObject();
         jsonResult.put(bindingResult.getObjectName(),sj.toString());
-        this.log.error("{}：[{}]",msg,jsonResult.toJSONString(),ex);
+        log.error("{}：[{}]",msg,jsonResult.toJSONString(),ex);
         return this.getExceptionResult(AppResultCodeEnum.SYSTEM_ERROR);
     }
 
     @ExceptionHandler(value = ConstraintViolationException.class)
     public Result constraintViolationExceptionHandler(ConstraintViolationException ex){
-        this.log.error("ConstraintViolationException异常信息：[{}]", ex.getMessage(),ex);
+        log.error("ConstraintViolationException异常信息：[{}]", ex.getMessage(),ex);
         JSONObject jsonResult = new JSONObject();
         ex.getConstraintViolations().forEach(e -> jsonResult.put(e.getPropertyPath().toString(),e.getMessageTemplate()));
         return this.getExceptionResult(AppResultCodeEnum.SYSTEM_ERROR);
@@ -69,7 +69,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     public Result exceptionHandler(Exception ex){
-        this.log.error("Exception异常信息：[{}]", ex.getMessage(),ex);
+        log.error("Exception异常信息：[{}]", ex.getMessage(),ex);
         return this.getExceptionResult(AppResultCodeEnum.SYSTEM_ERROR);
     }
 
