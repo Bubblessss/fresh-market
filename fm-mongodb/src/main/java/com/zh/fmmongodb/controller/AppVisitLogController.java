@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/appVisitLog")
 public class AppVisitLogController {
 
-    @PostMapping("/saveRequestAppVisitLog")
-    public Result saveRequestAppVisitLog(@RequestBody AppVisitLog appVisitLog){
+    @PostMapping("/saveAppVisitLog")
+    public Result saveAppVisitLog(@RequestBody AppVisitLog appVisitLog){
         log.info("fm-mongodb:{}",appVisitLog);
         return Result.genSuccessResult();
     }

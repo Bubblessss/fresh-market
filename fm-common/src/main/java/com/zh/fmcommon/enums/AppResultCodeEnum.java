@@ -12,6 +12,7 @@ public enum AppResultCodeEnum {
     FAIL(-1, "失败"),
 
     USER_NOT_EXIST(100, "用户不存在!"),
+    USER_NO_LOGIN(101, "登录超时,请重新登录!"),
 
 
     SYSTEM_ERROR(500, "系统异常!");

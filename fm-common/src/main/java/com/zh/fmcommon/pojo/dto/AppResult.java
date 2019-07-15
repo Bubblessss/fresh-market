@@ -28,4 +28,8 @@ public class AppResult {
         return new AppResult(AppResultCodeEnum.SYSTEM_ERROR);
     }
 
+    public static AppResult genFailResult(AppResultCodeEnum appResultCodeEnum) {
+        return new AppResult(appResultCodeEnum);
+    }
+
 }

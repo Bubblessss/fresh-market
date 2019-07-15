@@ -1,14 +1,10 @@
-package com.zh.fmcommon.aop;
+package com.zh.fmcommon.component.aop;
 
-import cn.hutool.core.util.IdUtil;
-import com.alibaba.fastjson.JSONObject;
 import com.zh.fmcommon.constance.CacheConstance;
-import com.zh.fmcommon.pojo.dto.AppResult;
 import com.zh.fmcommon.pojo.dto.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +12,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
